@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Digit Span Test</title>
+  <style>
+   body {
+      font-family: Arial, sans-serif;
+      background-color: #f1f1f1;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    /* 제목 스타일 */
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    /* 버튼 스타일 */
+    button {
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      padding: 10px 20px;
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* 숫자 컨테이너 스타일 */
+    #digits-container {
+      margin-top: 30px;
+    }
+
+    /* 숫자 스타일 */
+    .digit {
+      font-size: 48px;
+      color: #000000;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Digit Span Test</h1>
+  <button onclick="startTest()">Start</button>
+  <div id="digits-container"></div>
+  <script>
+    var digits = [1, 2, 3, 4, 5, 6, 7, 8, 9]; // 테스트에 사용할 숫자 배열
+    var digitSpan = 2; // 처음에 보여줄 숫자열의 길이
+    var currentSequence = [];
+    var currentIndex = 0;
+    var mistakes = 0;
+    var delay = 1000; // 숫자가 보여지는 시간 (1초)
+
+    function startTest() {
+      resetTest();
+      showSequence();
+    }
+
+    function resetTest() {
+      digitSpan = 2;
+      currentSequence = [];
+      currentIndex = 0;
+      mistakes = 0;
+      clearDigits();
+    }
+
+    function clearDigits() {
+      var digitsContainer = document.getElementById('digits-container');
+      digitsContainer.innerHTML = "";
+    }
+
+    function showSequence() {
+      clearDigits();
+      currentSequence = generateRandomSequence(digitSpan);
+      currentIndex = 0;
+      showNextDigit();
+    }
+
+    function showNextDigit() {
+      if (currentIndex < currentSequence.length) {
+        showDigit(currentSequence[currentIndex]);
+        currentIndex++;
+      } else {
+        setTimeout(hideDigits, delay);
+      }
+    }
+
+    function showDigit(digit) {
+      var digitsContainer = document.getElementById('digits-container');
+      var digitElement = document.createElement('p');
+      digitElement.classList.add('digit');
+      digitElement.textContent = digit;
+      digitsContainer.appendChild(digitElement);
+      setTimeout(clearDigits, delay);
+      setTimeout(showNextDigit, delay * 2);
+    }
+
+    function hideDigits() {
+      clearDigits();
+      setTimeout(checkAnswer, delay);
+    }
+
+    function checkAnswer() {
+      var userInput = prompt("Please enter the digits you saw");
+      var userDigits = userInput.split("").map(Number);
+      if (arraysEqual(userDigits, currentSequence)) {
+        increaseDigitSpan();
+        mistakes = 0;
+        showSequence();
+      } else {
+        mistakes++;
+        if (mistakes >= 2) {
+          endTest();
+        } else {
+          showSequence();
+        }
+      }
+    }
+
+    function increaseDigitSpan() {
+      digitSpan++;
+    }
+
+    function endTest() {
+      clearDigits();
+      alert("Test ended. Your digit span: " + (digitSpan - 1));
+      resetTest();
+    }
+
+    function generateRandomSequence(length) {
+      var sequence = [];
+      for (var i = 0; i < length; i++) {
+        var randomIndex = Math.floor(Math.random() * digits.length);
+        sequence.push(digits[randomIndex]);
+      }
+      return sequence;
+    }
+
+    function arraysEqual(a, b) {
+      if (a.length !== b.length) return false;
+      for (var i = 0; i < a.length; i++)
+      {
+        if (a[i] !== b[i]) return false;
+      }
+      return true;
+    }
+  </script>
+</body>
+</html>
